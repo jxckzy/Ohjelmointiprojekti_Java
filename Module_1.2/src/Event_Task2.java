@@ -78,7 +78,7 @@ class Test2 {
         };
 
         for (String desc : descriptions) {
-            double time = rand.nextDouble() * 100; // random time 0..100
+            double time = rand.nextDouble() * 100;
             Event_Task2 e = new Event_Task2(time, desc);
             list.insert(e);
             System.out.println("Inserted: " + e);

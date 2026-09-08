@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-// Represents the simulation clock singleton/utility
+
 class Clock_Task7 {
     private static Clock_Task7 instance = null;
     private double time;
@@ -30,12 +30,12 @@ class Clock_Task7 {
     }
 }
 
-// Enum for event types
+
 enum EventType_Task7 {
     ARRIVAL
 }
 
-// Represents a Customer containing their arrival time
+
 class Customer_Task7 {
     private double arrivalTime;
     private double departureTime;
@@ -57,7 +57,7 @@ class Customer_Task7 {
     }
 }
 
-// Represents an Event in the event list, ordered by time
+
 class Event_Task7 implements Comparable<Event_Task7> {
     private EventType_Task7 type;
     private double time;
@@ -81,7 +81,7 @@ class Event_Task7 implements Comparable<Event_Task7> {
     }
 }
 
-// Manages the event list queue
+
 class EventList_Task7 {
     private PriorityQueue<Event_Task7> events = new PriorityQueue<>();
 
@@ -98,7 +98,7 @@ class EventList_Task7 {
     }
 }
 
-// Generates arrival events using a distribution generator
+
 class ArrivalProcess_Task7 {
     private ContinuousGenerator generator;
     private EventType_Task7 eventType;
@@ -119,7 +119,7 @@ class ArrivalProcess_Task7 {
     }
 }
 
-// Represents a service point handling a queue of customers with a random service time generator
+
 class ServicePoint_Task7 {
     private Queue<Customer_Task7> queue = new LinkedList<>();
     private ContinuousGenerator serviceGenerator;
@@ -137,13 +137,11 @@ class ServicePoint_Task7 {
             Customer_Task7 customer = queue.poll();
             Clock_Task7 clock = Clock_Task7.getInstance();
 
-            // Generate service time and calculate departure
             double serviceTime = serviceGenerator.sample();
             double departureTime = clock.getTime() + serviceTime;
             clock.setTime(departureTime);
             customer.setDepartureTime(departureTime);
 
-            // Calculate time spent in the system (departure time - arrival time)
             double timeInSystem = customer.getDepartureTime() - customer.getArrivalTime();
             System.out.printf("Customer processed. Arrival: %.2f, Departure: %.2f, Time in system: %.2f\n",
                     customer.getArrivalTime(), customer.getDepartureTime(), timeInSystem);
@@ -156,35 +154,33 @@ public class Task7_Test {
         Clock_Task7 clock = Clock_Task7.getInstance();
         EventList_Task7 eventList = new EventList_Task7();
 
-        // Setup arrival process (e.g., Normal distribution for arrivals)
+
         ContinuousGenerator arrivalGenerator = new Normal(5.0, 1.0, 42);
         ArrivalProcess_Task7 arrivalProcess = new ArrivalProcess_Task7(arrivalGenerator, EventType_Task7.ARRIVAL);
 
-        // Setup service point (e.g., Normal distribution for service times)
+
         ContinuousGenerator serviceGenerator = new Normal(3.0, 0.5, 123);
         ServicePoint_Task7 servicePoint = new ServicePoint_Task7(serviceGenerator);
 
-        System.out.println("--- Generating 10 Arrival Events ---");
+        System.out.println("Generating 10 arrival events");
         for (int i = 0; i < 10; i++) {
             arrivalProcess.generateNextEvent(eventList);
         }
 
         System.out.printf("Clock time after generating all events: %.2f\n\n", clock.getTime());
 
-        System.out.println("--- Processing Events into Service Point Queue ---");
+        System.out.println("Processing events into service point queue");
         Event_Task7 event;
         while ((event = eventList.remove()) != null) {
-            // Each event time is marked as a customer arrival time
             Customer_Task7 customer = new Customer_Task7(event.getTime());
             servicePoint.addToQueue(customer);
         }
 
-        // Move the clock forward slightly (e.g., by 5 time units)
         double advancedTime = clock.getTime() + 5.0;
         clock.setTime(advancedTime);
         System.out.printf("Clock moved forward by 5 units. Current clock time: %.2f\n\n", clock.getTime());
 
-        System.out.println("--- Clearing Service Point ---");
+        System.out.println("Clearing service point");
         servicePoint.serve();
     }
 }
